@@ -1,5 +1,11 @@
+server:
+  port: 8081
+
 #  https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 spring:
+  output:
+    ansi:
+      enabled: ALWAYS
   jpa:
     show-sql: true
     open-in-view: false
@@ -14,9 +20,10 @@ spring:
         default_batch_fetch_size: 20
         # https://stackoverflow.com/questions/21257819/what-is-the-difference-between-hibernate-jdbc-fetch-size-and-hibernate-jdbc-batc
         jdbc.batch_size: 20
+        order_inserts: true
   datasource:
     # ImMemory
-    url: jdbc:h2:mem:bootjava
+    #url: jdbc:h2:mem:bootjava
     #    tcp: jdbc:h2:tcp://localhost:9092/mem:bootjava
     # Absolute path
     #    url: jdbc:h2:C:/projects/bootjava/db/bootjava
@@ -26,10 +33,22 @@ spring:
     # Relative path from home
     #    url: jdbc:h2:~/bootjava
     #    tcp: jdbc:h2:tcp://localhost:9092/~/bootjava
+    #username: sa
+    #password:
+    #HSQLDB:
+    url: jdbc:hsqldb:mem:restvoting;DB_CLOSE_DELAY=-1
+    driver-class-name: org.hsqldb.jdbc.JDBCDriver
     username: sa
     password:
+  sql:
+    init:
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+  transaction:
+    management:
+      annotation-driven: true
 
-# Jackson Serialization Issue Resolver
+  # Jackson Serialization Issue Resolver
   jackson.visibility:
     field: any
     getter: none
@@ -43,9 +62,13 @@ spring:
 
 logging:
   level:
-    root: WARN
-    ru.javaops.bootjava: DEBUG
-    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: DEBUG
+    root: INFO
+    org:
+      hibernate:
+        orm:
+          jdbc: TRACE
+    ru.javaops.bootjava: TRACE
+    org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver: TRACE
 
 server.servlet:
   encoding:

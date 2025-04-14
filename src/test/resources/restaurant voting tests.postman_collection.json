@@ -1,0 +1,822 @@
+{
+	"info": {
+		"_postman_id": "b71c4147-ff60-448e-a5a8-e98fb49fb621",
+		"name": "restaurant voting tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12761021"
+	},
+	"item": [
+		{
+			"name": "1 Просмотр меню всех ресторанов на сегодня",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/menu",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"menu"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2 Просмотр меню всех ресторанов на дату",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/menu/?date=2025-04-13&restaurantId=100003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"menu",
+						""
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2025-04-13"
+						},
+						{
+							"key": "restaurantId",
+							"value": "100003"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3 Список всех ресторанов",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/restaurant",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"restaurant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4 Поиск ресторана по id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/restaurant/100003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"restaurant",
+						"100003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7 Добавление ресторана",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"id\": null,\r\n        \"name\": \"eeeeeeeee1212\",\r\n        \"menus\": [\r\n                {\r\n                    \"id\": null,\r\n                    \"menuDate\": \"2025-04-10\",\r\n                    \"meals\": [\r\n                        {\r\n                            \"id\": null,\r\n                            \"name\": \"Еда на граничное значение\",\r\n                            \"price\": 100.00\r\n                        },\r\n                        {\r\n                            \"id\": null,\r\n                            \"name\": \"Завтрак\",\r\n                            \"price\": 500.00\r\n                        }\r\n                    ]\r\n                }\r\n        ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/restaurant",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"restaurant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8 Удаление ресторана",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/admin/restaurant/100003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"restaurant",
+						"100003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "9 Изменение ресторана",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"id\":\"100003\", \"name\":\"wewe333йй\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/restaurant/100003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"restaurant",
+						"100003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10 добавить меню ресторана на дату",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"meals\": [\r\n        {\r\n            \"name\": \"Еда1\",\r\n            \"price\": 111.11\r\n        },\r\n        {\r\n            \"name\": \"Еда2\",\r\n            \"price\": 222.22\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/restaurant/100003/menu/2025-04-13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"restaurant",
+						"100003",
+						"menu",
+						"2025-04-13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11 изменить меню ресторана на дату",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"meals\": [\r\n        {\r\n            \"name\": \"Еда3\",\r\n            \"price\": 333.33\r\n        },\r\n        {\r\n            \"name\": \"Еда4\",\r\n            \"price\": 444.44\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/restaurant/100003/menu/2025-04-13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"restaurant",
+						"100003",
+						"menu",
+						"2025-04-13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12 удалить меню ресторана на дату",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/admin/restaurant/100003/menu/2025-04-13",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"restaurant",
+						"100003",
+						"menu",
+						"2025-04-13"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13 Изменение ролей пользователя",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\"USER\",\"ADMIN\"]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/user/100002/role",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"user",
+						"100002",
+						"role"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14 Добавление пользователя с ролями",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"New22\",\r\n    \"email\": \"new22@yandex.ru\",\r\n    \"password\": \"passwordNew\",\r\n    \"roles\": [\"USER\",\"ADMIN\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "15 Получение списка всех пользователей с ролями",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/admin/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "16 Изменение пользователя",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"New22\",\r\n    \"email\": \"new222@yandex.ru\",\r\n    \"password\": \"passwordNew\",\r\n    \"roles\": [\"USER\",\"ADMIN\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/admin/user/100002",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"user",
+						"100002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "17 Удаление пользователя",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/admin/user/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"user",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "18 Получение своего пользователя",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "19 Добавление своего пользователя с ролью USER",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"New22\",\r\n    \"email\": \"new22@yandex.ru\",\r\n    \"password\": \"passwordNew\",\r\n    \"roles\": [\"USER\",\"ADMIN\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "20 Изменение своего пользователя",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \r\n        \"name\": \"User333\",\r\n        \"email\": \"user@yandex.ru\",\r\n        \"password\": \"password\",\r\n        \"enabled\": false,\r\n        \"roles\": [\"ADMIN\"]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "21 Удаление своего пользователя",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "22 Голосование за ресторан по его id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/voting/100004",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"voting",
+						"100004"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "27 Изменить голосование за ресторан",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/voting/100003",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"voting",
+						"100003"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "23 Получить список голосований на сегодня",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/voting",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"voting"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "24 Список всех голосований",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/voting/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"voting",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "25 Разрешить/запретить пользователя",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/admin/user/100002/enable?isEnabled=false",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"user",
+						"100002",
+						"enable"
+					],
+					"query": [
+						{
+							"key": "isEnabled",
+							"value": "false"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "26 Получение пользователя по id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/admin/user/100002",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"admin",
+						"user",
+						"100002"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getAllRestaurants",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/restaurant",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"restaurant"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getBetweenInclusive",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/topjava/rest/meals/filter?startDate=2020-01-30&startTime=13:00&endDate=2020-01-30&endTime=20:00:01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"topjava",
+						"rest",
+						"meals",
+						"filter"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2020-01-30"
+						},
+						{
+							"key": "startTime",
+							"value": "13:00"
+						},
+						{
+							"key": "endDate",
+							"value": "2020-01-30"
+						},
+						{
+							"key": "endTime",
+							"value": "20:00:01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getBetweenWithNullDates",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/topjava/rest/meals/filter",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"topjava",
+						"rest",
+						"meals",
+						"filter"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "testUTF",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/topjava/rest/meals/text",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"topjava",
+						"rest",
+						"meals",
+						"text"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
