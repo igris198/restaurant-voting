@@ -6,13 +6,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.model.Role;
 import ru.javaops.bootjava.model.User;
 import ru.javaops.bootjava.repository.UserRepository;
+import ru.javaops.bootjava.security.JWTUtil;
+import ru.javaops.bootjava.to.AuthResponseTo;
 import ru.javaops.bootjava.util.ValidationUtil;
 
 import java.net.URI;
@@ -28,9 +32,13 @@ public class AdminUserController {
     static final String REST_URL = "/api/admin/user";
     private final Logger log = LoggerFactory.getLogger(AdminUserController.class);
     private final UserRepository userRepository;
+    private final JWTUtil jwtUtil;
+    private final AuthenticationManager authenticationManager;
 
-    public AdminUserController(UserRepository userRepository) {
+    public AdminUserController(UserRepository userRepository, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.jwtUtil = jwtUtil;
+        this.authenticationManager = authenticationManager;
     }
 
     @PatchMapping(value = "/{id}/role", consumes = MediaType.APPLICATION_JSON_VALUE) // 13
@@ -43,16 +51,23 @@ public class AdminUserController {
         user.setRoles(roles);
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 14
-    public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
+    @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE) // 14
+    public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {
         log.info("AdminUserController createUser");
         ValidationUtil.checkIsNew(user);
         Assert.notNull(user, "user must not be null");
         User created = userRepository.save(user);
+        String token = jwtUtil.generateToken(created.getEmail());
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(
+                new AuthResponseTo(
+                        created.id(),
+                        created.getEmail(),
+                        created.isEnabled(),
+                        created.getRoles(),
+                        token));
     }
 
     @GetMapping // 15

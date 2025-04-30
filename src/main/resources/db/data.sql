@@ -8,9 +8,9 @@ DELETE FROM restaurant;
 ALTER SEQUENCE global_seq RESTART WITH 100000;
 
 INSERT INTO users (name, email, password)
-VALUES ('User', 'user@yandex.ru', 'password'), /* 100000 */
-       ('Admin', 'admin@gmail.com', 'admin'), /* 100001 */
-       ('Guest', 'guest@gmail.com', 'guest'); /* 100002 */
+VALUES ('User', 'user@yandex.ru', '$2a$10$C8XHUDql9pRRWZGCrdPouufaY8KrpjfC5dQuu573iorYhDUN501Km'), /* 100000 pass: password */
+       ('Admin', 'admin@gmail.com', '$2a$10$3AC7nMQnJuXjPAssQy2frOvS/rkzVESLxOjJ5wiE8JTjyMtXCvwe6'), /* 100001 pass: admin */
+       ('Guest', 'guest@gmail.com', '$2a$10$noLk0msQB6fmeJCEGTu9yun.Sr8heXFa5nTSkm84uHd3xtdEwK2B2'); /* 100002 pass: guest */
 
 INSERT INTO user_role (role, user_id)
 VALUES ('USER', 100000),

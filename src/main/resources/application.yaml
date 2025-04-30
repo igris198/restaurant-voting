@@ -77,3 +77,5 @@ server.servlet:
     force: true
 
 springdoc.swagger-ui.path: /
+
+jwt-secret-key: SECRET

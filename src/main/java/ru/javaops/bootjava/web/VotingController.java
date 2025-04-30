@@ -13,7 +13,7 @@ import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.repository.UserRepository;
 import ru.javaops.bootjava.repository.VotingRepository;
 import ru.javaops.bootjava.to.VotingTo;
-import ru.javaops.bootjava.util.SecurityUtil;
+import ru.javaops.bootjava.security.SecurityUtil;
 import ru.javaops.bootjava.util.VotingUtil;
 
 import java.net.URI;

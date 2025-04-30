@@ -1,4 +1,4 @@
-package ru.javaops.bootjava.util;
+package ru.javaops.bootjava.util.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

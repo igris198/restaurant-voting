@@ -2,15 +2,11 @@ package ru.javaops.bootjava.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "voting", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "voting_date"}, name = "voting_unique_user_date_idx")})
-@Getter
-@Setter
 public class Voting extends AbstractBaseEntity {
     @Column(name = "voting_date", nullable = false)
     @NotNull
@@ -35,6 +31,30 @@ public class Voting extends AbstractBaseEntity {
         super(id);
         this.votingDate = LocalDate.now();
         this.user = user;
+        this.restaurant = restaurant;
+    }
+
+    public @NotNull LocalDate getVotingDate() {
+        return votingDate;
+    }
+
+    public void setVotingDate(@NotNull LocalDate votingDate) {
+        this.votingDate = votingDate;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
         this.restaurant = restaurant;
     }
 }

@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -19,8 +17,6 @@ import java.util.Set;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
 public class User extends AbstractNamedEntity {
     @Column(name = "email", nullable = false, unique = true)
     @Email
@@ -66,6 +62,42 @@ public class User extends AbstractNamedEntity {
         this.enabled = enabled;
         this.registered = registered;
         this.roles = roles;
+    }
+
+    public @Email @NotBlank @Size(max = 128) String getEmail() {
+        return email;
+    }
+
+    public void setEmail(@Email @NotBlank @Size(max = 128) String email) {
+        this.email = email;
+    }
+
+    public @NotBlank @Size(min = 5, max = 128) String getPassword() {
+        return password;
+    }
+
+    public void setPassword(@NotBlank @Size(min = 5, max = 128) String password) {
+        this.password = password;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public @NotNull Date getRegistered() {
+        return registered;
+    }
+
+    public void setRegistered(@NotNull Date registered) {
+        this.registered = registered;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 
     public void setRoles(Set<Role> roles) {

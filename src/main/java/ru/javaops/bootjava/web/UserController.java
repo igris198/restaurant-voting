@@ -1,19 +1,16 @@
 package ru.javaops.bootjava.web;
 
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.model.Role;
 import ru.javaops.bootjava.model.User;
 import ru.javaops.bootjava.repository.UserRepository;
-import ru.javaops.bootjava.util.SecurityUtil;
+import ru.javaops.bootjava.security.SecurityUtil;
 import ru.javaops.bootjava.util.ValidationUtil;
 
-import java.net.URI;
 import java.util.Collections;
 
 @RestController
@@ -30,18 +27,6 @@ public class UserController {
     @GetMapping // 18
     public ResponseEntity<User> get() {
         return ResponseEntity.of(userRepository.findById(SecurityUtil.authUserId()));
-    }
-
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 19
-    public ResponseEntity<User> createUser(@RequestBody @Valid User user) {
-        ValidationUtil.checkIsNew(user);
-        Assert.notNull(user, "user must not be null");
-        user.setRoles(Collections.singleton(Role.USER));
-        User created = userRepository.save(user);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping // 20
