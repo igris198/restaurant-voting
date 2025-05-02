@@ -3,11 +3,11 @@ package ru.javaops.bootjava.util.exception;
 import org.springframework.http.HttpStatus;
 
 public enum ErrorType {
-    APP_ERROR("error.appError", HttpStatus.INTERNAL_SERVER_ERROR),
-    DATA_NOT_FOUND("error.dataNotFound", HttpStatus.UNPROCESSABLE_ENTITY),
-    DATA_ERROR("error.dataError", HttpStatus.CONFLICT),
-    VALIDATION_ERROR("error.validationError", HttpStatus.UNPROCESSABLE_ENTITY),
-    WRONG_REQUEST("error.wrongRequest", HttpStatus.BAD_REQUEST);
+    APP_ERROR("Application error", HttpStatus.INTERNAL_SERVER_ERROR),
+    DATA_NOT_FOUND("Data not found", HttpStatus.UNPROCESSABLE_ENTITY),
+    DATA_ERROR("Data error", HttpStatus.CONFLICT),
+    VALIDATION_ERROR("Validation error", HttpStatus.UNPROCESSABLE_ENTITY),
+    WRONG_REQUEST("Wrong request", HttpStatus.BAD_REQUEST);
 
     private final String errorCode;
     private final HttpStatus status;

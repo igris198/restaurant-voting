@@ -3,27 +3,20 @@ package ru.javaops.bootjava.util.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.javaops.bootjava.util.ValidationUtil;
 
 import static ru.javaops.bootjava.util.exception.ErrorType.*;
 
 @RestControllerAdvice
-public class RestaurantVotingExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestaurantVotingExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(RestaurantVotingExceptionHandler.class);
-
-    private final MessageSourceAccessor messageSourceAccessor;
-
-    public RestaurantVotingExceptionHandler(MessageSourceAccessor messageSourceAccessor) {
-        this.messageSourceAccessor = messageSourceAccessor;
-    }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorInfo> notFoundError(HttpServletRequest req, NotFoundException e) {
@@ -33,7 +26,7 @@ public class RestaurantVotingExceptionHandler extends ResponseEntityExceptionHan
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorInfo> bindValidationError(HttpServletRequest req, BindException e) {
         String[] details = e.getBindingResult().getFieldErrors().stream()
-                .map(messageSourceAccessor::getMessage)
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .toArray(String[]::new);
 
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, details);
@@ -60,7 +53,7 @@ public class RestaurantVotingExceptionHandler extends ResponseEntityExceptionHan
                 .body(new ErrorInfo(
                         req.getRequestURL(),
                         errorType,
-                        messageSourceAccessor.getMessage(errorType.getErrorCode()),
+                        errorType.getErrorCode(),
                         details.length != 0 ? details : new String[]{ValidationUtil.getMessage(rootCause)})
                 );
     }
