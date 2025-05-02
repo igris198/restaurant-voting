@@ -14,6 +14,7 @@ import ru.javaops.bootjava.repository.UserRepository;
 import ru.javaops.bootjava.repository.VotingRepository;
 import ru.javaops.bootjava.to.VotingTo;
 import ru.javaops.bootjava.security.SecurityUtil;
+import ru.javaops.bootjava.util.ValidationUtil;
 import ru.javaops.bootjava.util.VotingUtil;
 
 import java.net.URI;
@@ -39,8 +40,7 @@ public class VotingController {
     @PostMapping("/{restaurantId}") // 22
     @Transactional
     public ResponseEntity<VotingTo> create(@PathVariable Integer restaurantId) {
-        Restaurant restaurant = restaurantRepository.getReferenceById(restaurantId);
-        Assert.notNull(restaurant, "restaurant with id = " + restaurantId + " not found");
+        Restaurant restaurant = ValidationUtil.checkNotFound(restaurantRepository.getReferenceById(restaurantId), restaurantId);
 
         int userId = SecurityUtil.authUserId();
         Voting voting = new Voting(userRepository.getReferenceById(userId), restaurant);
@@ -57,12 +57,10 @@ public class VotingController {
     @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable Integer restaurantId) {
-        Restaurant restaurant = restaurantRepository.getReferenceById(restaurantId);
-        Assert.notNull(restaurant, "restaurant with id = " + restaurantId + " not found");
+        Restaurant restaurant = ValidationUtil.checkNotFound(restaurantRepository.getReferenceById(restaurantId), restaurantId);
 
         int userId = SecurityUtil.authUserId();
-        Voting voting = votingRepository.findByUserIdAndCurrentDate(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found"));
+        Voting voting = ValidationUtil.checkNotFound(votingRepository.findByUserIdAndCurrentDate(userId).orElse(null), userId);
 
         if (LocalTime.now().isAfter(LocalTime.of(11, 0))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "vote cannot be changed");

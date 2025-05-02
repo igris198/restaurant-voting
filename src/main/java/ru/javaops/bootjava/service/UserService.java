@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.javaops.bootjava.model.User;
 import ru.javaops.bootjava.repository.UserRepository;
 import ru.javaops.bootjava.security.AuthorizedUser;
+import ru.javaops.bootjava.util.ValidationUtil;
 
 import java.util.Optional;
 
@@ -21,8 +22,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.getByEmail(email.toLowerCase());
-        return new AuthorizedUser(optionalUser.orElseThrow(
-                    () -> new UsernameNotFoundException("User '" + email + "' was not found")));
+        User user = ValidationUtil.checkNotFound(userRepository.getByEmail(email.toLowerCase()), "User with email '" + email + "' was not found");
+        return new AuthorizedUser(user);
     }
 }

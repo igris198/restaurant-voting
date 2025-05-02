@@ -1,17 +1,22 @@
 package ru.javaops.bootjava.util;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 import ru.javaops.bootjava.model.AbstractBaseEntity;
-import ru.javaops.bootjava.model.Menu;
-import ru.javaops.bootjava.model.Restaurant;
-import ru.javaops.bootjava.security.SecurityUtil;
 import ru.javaops.bootjava.util.exception.NotFoundException;
 
-import java.time.LocalDate;
+import ru.javaops.bootjava.util.exception.ErrorType;
 
 public class ValidationUtil {
     public static <T> T checkNotFound(T object, int id) {
         checkNotFound(object != null, id);
+        return object;
+    }
+
+    public static <T> T checkNotFound(T object, String msg) {
+        checkNotFound(object != null, msg);
         return object;
     }
 
@@ -42,25 +47,23 @@ public class ValidationUtil {
         }
     }
 
-    public static void assureMenuRestaurantIdAndDateConsistent(@NonNull Menu menu, int restaurantId, LocalDate menuDate) {
-        Restaurant restaurant = menu.getRestaurant();
-        if (restaurant == null) {
-            throw new IllegalArgumentException(menu + " restaurant must be not null");
-        }
-        Integer menuRestaurantId = restaurant.getId();
-        if (menuRestaurantId != null && menuRestaurantId != restaurantId) {
-            throw new IllegalArgumentException(menu + " must be with restaurantId=" + restaurantId);
-        }
-        if (menu.getMenuDate() != menuDate) {
-            throw new IllegalArgumentException(menu + " must be with menu_date=" + menuDate.toString());
-        }
+    @NonNull
+    public static Throwable getRootCause(@NonNull Throwable t) {
+        Throwable rootCause = NestedExceptionUtils.getRootCause(t);
+        return rootCause != null ? rootCause : t;
     }
 
-    public static void assureIdAuthorized(int id) {
-        int userId = SecurityUtil.authUserId();
-        if (id != userId) {
-            throw new IllegalArgumentException("id " + id + " does not match authorized user");
-        }
+    public static String getMessage(Throwable e) {
+        return e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.getClass().getName();
     }
 
+    public static Throwable logAndGetRootCause(Logger log, HttpServletRequest req, Exception e, boolean logStackTrace, ErrorType errorType) {
+        Throwable rootCause = ValidationUtil.getRootCause(e);
+        if (logStackTrace) {
+            log.error(errorType + " at request " + req.getRequestURL(), rootCause);
+        } else {
+            log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
+        }
+        return rootCause;
+    }
 }

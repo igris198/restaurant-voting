@@ -6,11 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.util.Assert;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.model.Role;
 import ru.javaops.bootjava.model.User;
@@ -33,29 +30,25 @@ public class AdminUserController {
     private final Logger log = LoggerFactory.getLogger(AdminUserController.class);
     private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
 
-    public AdminUserController(UserRepository userRepository, JWTUtil jwtUtil, AuthenticationManager authenticationManager) {
+    public AdminUserController(UserRepository userRepository, JWTUtil jwtUtil) {
         this.userRepository = userRepository;
         this.jwtUtil = jwtUtil;
-        this.authenticationManager = authenticationManager;
     }
 
     @PatchMapping(value = "/{id}/role", consumes = MediaType.APPLICATION_JSON_VALUE) // 13
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createRoles(@PathVariable int id, @RequestBody Set<Role> roles) {
+    public void createRoles(@PathVariable int id, @RequestBody @Valid Set<Role> roles) {
         log.info("AdminUserController createRoles. id = {}", id);
-
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user with id = " + id + " not found"));
+        User user = ValidationUtil.checkNotFound(userRepository.findById(id).orElse(null), id);
         user.setRoles(roles);
     }
 
     @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE) // 14
-    public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user, BindingResult bindingResult) {
+    public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user) {
         log.info("AdminUserController createUser");
-        ValidationUtil.checkIsNew(user);
         Assert.notNull(user, "user must not be null");
+        ValidationUtil.checkIsNew(user);
         User created = userRepository.save(user);
         String token = jwtUtil.generateToken(created.getEmail());
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -65,7 +58,6 @@ public class AdminUserController {
                 new AuthResponseTo(
                         created.id(),
                         created.getEmail(),
-                        created.isEnabled(),
                         created.getRoles(),
                         token));
     }
@@ -81,7 +73,6 @@ public class AdminUserController {
     public void updateUser(@PathVariable int id, @RequestBody @Valid User user) {
         log.info("AdminUserController updateUser id={}", id);
         assureIdConsistent(user, id);
-        Assert.notNull(user, "user must not be null");
         checkNotFound(userRepository.save(user), id);
     }
 

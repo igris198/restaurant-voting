@@ -1,5 +1,6 @@
 package ru.javaops.bootjava.web;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,7 @@ public class UserController {
 
     @PutMapping // 20
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateUser(@RequestBody User user) {
-        Assert.notNull(user, "user must not be null");
+    public void updateUser(@RequestBody @Valid User user) {
         int id = SecurityUtil.authUserId();
         ValidationUtil.assureIdConsistent(user, id);
         user.setRoles(Collections.singleton(Role.USER));

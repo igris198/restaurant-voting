@@ -7,7 +7,6 @@ import java.util.Set;
 public record AuthResponseTo(
         Integer id,
         String email,
-        boolean enabled,
         Set<Role> roles,
         String accessToken) {
 }

@@ -45,8 +45,8 @@ public class AdminRestaurantController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE) // 9
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable int id, @RequestBody @Valid Restaurant restaurant) {
-        assureIdConsistent(restaurant, id);
         Assert.notNull(restaurant, "restaurant must not be null");
+        assureIdConsistent(restaurant, id);
         checkNotFound(restaurantRepository.save(restaurant), id);
     }
 }

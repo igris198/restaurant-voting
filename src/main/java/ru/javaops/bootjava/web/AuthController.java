@@ -45,7 +45,6 @@ public class AuthController {
     @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE) // 31
     public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user) {
         ValidationUtil.checkIsNew(user);
-        Assert.notNull(user, "user must not be null");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Collections.singleton(Role.USER));
         User created = userRepository.save(user);
@@ -56,25 +55,23 @@ public class AuthController {
         return ResponseEntity.created(uriOfNewResource).body(new AuthResponseTo(
                 created.id(),
                 created.getEmail(),
-                created.isEnabled(),
                 created.getRoles(),
                 token));
     }
 
     @PostMapping("/login") // 30
-    public AuthResponseTo performLogin(@RequestBody AuthTo authTo) {
+    public AuthResponseTo performLogin(@RequestBody @Valid AuthTo authTo) {
         UsernamePasswordAuthenticationToken authInputToken =
                 new UsernamePasswordAuthenticationToken(authTo.email(),
                         authTo.password());
 
         authenticationManager.authenticate(authInputToken);
 
-        User user = userRepository.getByEmail(authTo.email().toLowerCase()).orElseThrow();
+        User user = ValidationUtil.checkNotFound(userRepository.getByEmail(authTo.email().toLowerCase()), "");
         String token = jwtUtil.generateToken(authTo.email());
         return new AuthResponseTo(
                 user.id(),
                 user.getEmail(),
-                user.isEnabled(),
                 user.getRoles(),
                 token);
     }

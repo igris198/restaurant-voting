@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.model.Meal;
 import ru.javaops.bootjava.model.Menu;
@@ -41,20 +40,16 @@ public class AdminMenuController {
             @PathVariable int id,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestBody @Valid MenuTo menuTo) {
-        Restaurant restaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant with id = " + id + " not found"));
-
         Set<MealTo> mealTos = menuTo.meals();
         Assert.notNull(mealTos, "meals in menu must not be null");
 
+        Restaurant restaurant = ValidationUtil.checkNotFound(restaurantRepository.findById(id).orElse(null), id);
         Menu menu = new Menu(date, restaurant);
         menu.setMeals(meatTosToMeals(mealTos));
-        Assert.notNull(menu, "menu must not be null");
-
         Menu created = menuRepository.save(menu);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL)
-                .buildAndExpand(restaurant.getId(), created.getMenuDate()).toUri();
+                .buildAndExpand(restaurant.id(), created.getMenuDate()).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
@@ -64,16 +59,16 @@ public class AdminMenuController {
             @PathVariable int id,
             @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestBody @Valid MenuTo menuTo) {
-        Assert.notNull(menuTo, "menu must not be null");
-        Menu menu = menuRepository.getMenu(id, date).stream().findAny()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Menu with restaurantId = " + id + " and menuDate = " + date + "not found"));
-
         Set<MealTo> mealTos = menuTo.meals();
         Assert.notNull(mealTos, "meals in menu must not be null");
 
+        Menu menu = ValidationUtil.checkNotFound(
+                menuRepository.getMenu(id, date).stream().findAny().orElse(null),
+                "Menu with restaurantId = " + id + " and menuDate = " + date + "not found");
+
         menu.getMeals().clear();
         menu.setMeals(meatTosToMeals(mealTos));
-        Assert.notNull(menu, "menu must not be null");
+
         ValidationUtil.checkNotFound(menuRepository.save(menu), menu.id());
     }
 

@@ -25,5 +25,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @QueryHints({
             @QueryHint(name = "hql.DistinctTokenPassingMode", value = "NEVER")
     })
-    Optional<User> getByEmail(String email);
+    User getByEmail(String email);
 }
