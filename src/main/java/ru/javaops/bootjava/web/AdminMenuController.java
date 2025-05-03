@@ -1,5 +1,8 @@
 package ru.javaops.bootjava.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "AdminMenuController", description = "Administrative operations with menu")
 public class AdminMenuController {
     static final String REST_URL = "/api/admin/restaurant/{id}/menu/{date}";
 
@@ -35,11 +39,12 @@ public class AdminMenuController {
         this.restaurantRepository = restaurantRepository;
     }
 
+    @Operation(summary = "Adding the restaurant menu to date")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 10
     public ResponseEntity<Menu> addMenu(
-            @PathVariable int id,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestBody @Valid MenuTo menuTo) {
+            @Parameter(description = "Restaurant id") @PathVariable int id,
+            @Parameter(description = "Menu date") @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @Parameter(description = "Menu content") @RequestBody @Valid MenuTo menuTo) {
         Set<MealTo> mealTos = menuTo.meals();
         Assert.notNull(mealTos, "meals in menu must not be null");
 
@@ -53,12 +58,13 @@ public class AdminMenuController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @Operation(summary = "Changing the menu of the restaurant to date")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 11
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateMenu(
-            @PathVariable int id,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestBody @Valid MenuTo menuTo) {
+            @Parameter(description = "Restaurant id") @PathVariable int id,
+            @Parameter(description = "Menu date") @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @Parameter(description = "Menu content") @RequestBody @Valid MenuTo menuTo) {
         Set<MealTo> mealTos = menuTo.meals();
         Assert.notNull(mealTos, "meals in menu must not be null");
 
@@ -72,11 +78,12 @@ public class AdminMenuController {
         ValidationUtil.checkNotFound(menuRepository.save(menu), menu.id());
     }
 
+    @Operation(summary = "Delete restaurant menu by date")
     @DeleteMapping // 12
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteMenu(
-            @PathVariable int id,
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @Parameter(description = "Restaurant id") @PathVariable int id,
+            @Parameter(description = "Menu date") @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         menuRepository.deleteByRestaurantAndDate(id, date);
     }
 

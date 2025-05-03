@@ -1,5 +1,7 @@
 package ru.javaops.bootjava.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = RestaurantMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "RestaurantMenuController", description = "Common menu operations")
 public class RestaurantMenuController {
     static final String REST_URL = "/api/restaurant/menu";
 
@@ -23,6 +26,7 @@ public class RestaurantMenuController {
         this.restaurantRepository = restaurantRepository;
     }
 
+    @Operation(summary = "View restaurant menu by date")
     @GetMapping // 2
     public List<Restaurant> get(
             @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,

@@ -1,10 +1,11 @@
 package ru.javaops.bootjava.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import ru.javaops.bootjava.model.Role;
 import ru.javaops.bootjava.model.User;
@@ -16,6 +17,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping(value = UserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "UserController", description = "Operations with its own user")
 public class UserController {
     static final String REST_URL = "/api/user";
 
@@ -25,11 +27,13 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
+    @Operation(summary = "Get your user")
     @GetMapping // 18
     public ResponseEntity<User> get() {
         return ResponseEntity.of(userRepository.findById(SecurityUtil.authUserId()));
     }
 
+    @Operation(summary = "Change your user")
     @PutMapping // 20
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateUser(@RequestBody @Valid User user) {
@@ -39,6 +43,7 @@ public class UserController {
         ValidationUtil.checkNotFound(userRepository.save(user), id);
     }
 
+    @Operation(summary = "Deleting your user")
     @DeleteMapping // 21
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser() {

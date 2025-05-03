@@ -1,5 +1,7 @@
 package ru.javaops.bootjava.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ import static ru.javaops.bootjava.util.ValidationUtil.checkNotFound;
 
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "AdminUserController", description = "Administrative operations with users")
 public class AdminUserController {
     static final String REST_URL = "/api/admin/user";
     private final Logger log = LoggerFactory.getLogger(AdminUserController.class);
@@ -36,6 +39,7 @@ public class AdminUserController {
         this.jwtUtil = jwtUtil;
     }
 
+    @Operation(summary = "Change user roles")
     @PatchMapping(value = "/{id}/role", consumes = MediaType.APPLICATION_JSON_VALUE) // 13
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createRoles(@PathVariable int id, @RequestBody @Valid Set<Role> roles) {
@@ -44,6 +48,7 @@ public class AdminUserController {
         user.setRoles(roles);
     }
 
+    @Operation(summary = "Adding user with any role")
     @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE) // 14
     public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user) {
         log.info("AdminUserController createUser");
@@ -62,12 +67,14 @@ public class AdminUserController {
                         token));
     }
 
+    @Operation(summary = "Get a list of all users with roles")
     @GetMapping // 15
     public List<User> getUsers() {
         log.info("AdminUserController getUsers");
         return userRepository.findAll();
     }
 
+    @Operation(summary = "Change any user")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE) // 16
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateUser(@PathVariable int id, @RequestBody @Valid User user) {
@@ -76,6 +83,7 @@ public class AdminUserController {
         checkNotFound(userRepository.save(user), id);
     }
 
+    @Operation(summary = "Remove any user")
     @DeleteMapping("/{id}") // 17
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
@@ -83,12 +91,14 @@ public class AdminUserController {
         userRepository.delete(id);
     }
 
+    @Operation(summary = "Get user by id")
     @GetMapping("/{id}") // 26
     public ResponseEntity<User> get(@PathVariable int id) {
         log.info("AdminUserController get id={}", id);
         return ResponseEntity.of(userRepository.findById(id));
     }
 
+    @Operation(summary = "Allow/Deny user")
     @PatchMapping(value = "/{id}/enable") //25
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setEnabled(@PathVariable int id, @RequestParam boolean isEnabled) {

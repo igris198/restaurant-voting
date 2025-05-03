@@ -1,12 +1,13 @@
 package ru.javaops.bootjava.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import java.util.Collections;
 
 @RestController
 @RequestMapping(value = AuthController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "AuthController", description = "Authorization and registration")
 public class AuthController {
     static final String REST_URL = "/api/auth";
 
@@ -42,6 +44,7 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Operation(summary = "User registration with USER role")
     @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE) // 31
     public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user) {
         ValidationUtil.checkIsNew(user);
@@ -59,6 +62,7 @@ public class AuthController {
                 token));
     }
 
+    @Operation(summary = "User login")
     @PostMapping("/login") // 30
     public AuthResponseTo performLogin(@RequestBody @Valid AuthTo authTo) {
         UsernamePasswordAuthenticationToken authInputToken =

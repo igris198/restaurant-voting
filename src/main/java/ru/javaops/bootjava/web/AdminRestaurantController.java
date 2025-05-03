@@ -1,5 +1,7 @@
 package ru.javaops.bootjava.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +19,7 @@ import static ru.javaops.bootjava.util.ValidationUtil.checkNotFound;
 
 @RestController
 @RequestMapping(value = AdminRestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "AdminRestaurantController", description = "Restaurant administration")
 public class AdminRestaurantController {
     static final String REST_URL = "/api/admin/restaurant";
 
@@ -26,6 +29,7 @@ public class AdminRestaurantController {
         this.restaurantRepository = restaurantRepository;
     }
 
+    @Operation(summary = "Addition of restaurant")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 7
     public ResponseEntity<Restaurant> create(@RequestBody @Valid Restaurant restaurant) {
         Restaurant created = restaurantRepository.save(restaurant);
@@ -36,16 +40,17 @@ public class AdminRestaurantController {
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
+    @Operation(summary = "Restaurant removal")
     @DeleteMapping("/{id}") // 8
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         restaurantRepository.deleteById(id);
     }
 
+    @Operation(summary = "Restaurant change")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE) // 9
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@PathVariable int id, @RequestBody @Valid Restaurant restaurant) {
-        Assert.notNull(restaurant, "restaurant must not be null");
         assureIdConsistent(restaurant, id);
         checkNotFound(restaurantRepository.save(restaurant), id);
     }
