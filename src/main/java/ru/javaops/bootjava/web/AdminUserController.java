@@ -29,7 +29,7 @@ import static ru.javaops.bootjava.util.ValidationUtil.checkNotFound;
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "AdminUserController", description = "Administrative operations with users")
 public class AdminUserController {
-    static final String REST_URL = "/api/admin/user";
+    public static final String REST_URL = "/api/admin/users";
     private final Logger log = LoggerFactory.getLogger(AdminUserController.class);
     private final UserRepository userRepository;
     private final JWTUtil jwtUtil;

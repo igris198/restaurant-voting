@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.model.Voting;
-import ru.javaops.bootjava.repository.RestaurantRepository;
+import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
 import ru.javaops.bootjava.repository.UserRepository;
 import ru.javaops.bootjava.repository.VotingRepository;
 import ru.javaops.bootjava.security.SecurityUtil;
@@ -27,13 +27,13 @@ import java.util.List;
 @RequestMapping(VotingController.REST_URL)
 @Tag(name = "UserController", description = "Voting operations")
 public class VotingController {
-    static final String REST_URL = "/api/voting";
+    public static final String REST_URL = "/api/votes";
 
     VotingRepository votingRepository;
-    RestaurantRepository restaurantRepository;
+    DataJpaRestaurantRepository restaurantRepository;
     UserRepository userRepository;
 
-    public VotingController(VotingRepository votingRepository, RestaurantRepository restaurantRepository, UserRepository userRepository) {
+    public VotingController(VotingRepository votingRepository, DataJpaRestaurantRepository restaurantRepository, UserRepository userRepository) {
         this.votingRepository = votingRepository;
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
@@ -66,7 +66,8 @@ public class VotingController {
         int userId = SecurityUtil.authUserId();
         Voting voting = ValidationUtil.checkNotFound(votingRepository.findByUserIdAndCurrentDate(userId).orElse(null), userId);
 
-        if (LocalTime.now().isAfter(LocalTime.of(11, 0))) {
+        LocalTime now = LocalTime.now();
+        if (now.isAfter(LocalTime.of(11, 0))) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "vote cannot be changed");
         }
         voting.setRestaurant(restaurant);

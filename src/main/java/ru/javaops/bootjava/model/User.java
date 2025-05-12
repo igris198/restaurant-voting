@@ -1,6 +1,5 @@
 package ru.javaops.bootjava.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -28,7 +27,7 @@ public class User extends AbstractNamedEntity {
     @Column(name = "password", nullable = false)
     @NotBlank
     @Size(min = 5, max = 128)
-    @JsonIgnore
+    //@JsonIgnore
     private String password;
 
     @Column(name = "enabled", nullable = false)
@@ -50,6 +49,10 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     public User() {
+    }
+
+    public User(User u) {
+        this(u.id, u.name, u.email, u.password, u.enabled, u.registered, u.roles);
     }
 
     public User(String name, String email, String password, Set<Role> roles) {

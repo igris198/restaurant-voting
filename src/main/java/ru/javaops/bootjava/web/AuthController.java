@@ -3,11 +3,14 @@ package ru.javaops.bootjava.web;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +31,7 @@ import java.util.Collections;
 @RequestMapping(value = AuthController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "AuthController", description = "Authorization and registration")
 public class AuthController {
-    static final String REST_URL = "/api/auth";
+    public static final String REST_URL = "/api/auth";
 
     private final UserRepository userRepository;
     private final JWTUtil jwtUtil;
@@ -44,6 +47,7 @@ public class AuthController {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     @Operation(summary = "User registration with USER role")
     @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE) // 31
     public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user) {
@@ -64,19 +68,23 @@ public class AuthController {
 
     @Operation(summary = "User login")
     @PostMapping("/login") // 30
-    public AuthResponseTo performLogin(@RequestBody @Valid AuthTo authTo) {
-        UsernamePasswordAuthenticationToken authInputToken =
-                new UsernamePasswordAuthenticationToken(authTo.email(),
-                        authTo.password());
+    public ResponseEntity<AuthResponseTo> performLogin(@RequestBody @Valid AuthTo authTo) {
+        try {
+            UsernamePasswordAuthenticationToken authInputToken =
+                    new UsernamePasswordAuthenticationToken(authTo.email(),
+                            authTo.password());
 
-        authenticationManager.authenticate(authInputToken);
+            authenticationManager.authenticate(authInputToken);
 
-        User user = ValidationUtil.checkNotFound(userRepository.getByEmail(authTo.email().toLowerCase()), "");
-        String token = jwtUtil.generateToken(authTo.email());
-        return new AuthResponseTo(
-                user.id(),
-                user.getEmail(),
-                user.getRoles(),
-                token);
+            User user = ValidationUtil.checkNotFound(userRepository.getByEmail(authTo.email().toLowerCase()), "");
+            String token = jwtUtil.generateToken(authTo.email());
+            return ResponseEntity.ok(new AuthResponseTo(
+                    user.id(),
+                    user.getEmail(),
+                    user.getRoles(),
+                    token));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

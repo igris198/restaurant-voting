@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javaops.bootjava.model.Restaurant;
-import ru.javaops.bootjava.repository.RestaurantRepository;
+import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,11 +18,11 @@ import java.util.List;
 @RequestMapping(value = RestaurantMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "RestaurantMenuController", description = "Common menu operations")
 public class RestaurantMenuController {
-    static final String REST_URL = "/api/restaurant/menu";
+    public static final String REST_URL = "/api/restaurants/menus";
 
-    private final RestaurantRepository restaurantRepository;
+    private final DataJpaRestaurantRepository restaurantRepository;
 
-    public RestaurantMenuController(RestaurantRepository restaurantRepository) {
+    public RestaurantMenuController(DataJpaRestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 

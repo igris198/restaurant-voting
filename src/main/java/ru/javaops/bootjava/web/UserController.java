@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.javaops.bootjava.model.Role;
 import ru.javaops.bootjava.model.User;
@@ -19,7 +20,7 @@ import java.util.Collections;
 @RequestMapping(value = UserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "UserController", description = "Operations with its own user")
 public class UserController {
-    static final String REST_URL = "/api/user";
+    public static final String REST_URL = "/api/users";
 
     private final UserRepository userRepository;
 
@@ -36,6 +37,7 @@ public class UserController {
     @Operation(summary = "Change your user")
     @PutMapping // 20
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void updateUser(@RequestBody @Valid User user) {
         int id = SecurityUtil.authUserId();
         ValidationUtil.assureIdConsistent(user, id);
@@ -46,6 +48,7 @@ public class UserController {
     @Operation(summary = "Deleting your user")
     @DeleteMapping // 21
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
     public void deleteUser() {
         int id = SecurityUtil.authUserId();
         ValidationUtil.checkNotFound(userRepository.delete(id), id);

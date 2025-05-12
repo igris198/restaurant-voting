@@ -6,8 +6,7 @@ public enum ErrorType {
     APP_ERROR("Application error", HttpStatus.INTERNAL_SERVER_ERROR),
     DATA_NOT_FOUND("Data not found", HttpStatus.UNPROCESSABLE_ENTITY),
     DATA_ERROR("Data error", HttpStatus.CONFLICT),
-    VALIDATION_ERROR("Validation error", HttpStatus.UNPROCESSABLE_ENTITY),
-    WRONG_REQUEST("Wrong request", HttpStatus.BAD_REQUEST);
+    VALIDATION_ERROR("Validation error", HttpStatus.UNPROCESSABLE_ENTITY);
 
     private final String errorCode;
     private final HttpStatus status;

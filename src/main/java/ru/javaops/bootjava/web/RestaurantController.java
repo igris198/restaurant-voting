@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.javaops.bootjava.repository.RestaurantRepository;
+import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
 import ru.javaops.bootjava.to.RestaurantTo;
 
 import java.util.List;
@@ -14,11 +14,11 @@ import java.util.List;
 @RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "RestaurantController", description = "Common restaurant operations")
 public class RestaurantController {
-    static final String REST_URL = "/api/restaurant";
+    public static final String REST_URL = "/api/restaurants";
 
-    private final RestaurantRepository restaurantRepository;
+    private final DataJpaRestaurantRepository restaurantRepository;
 
-    public RestaurantController(RestaurantRepository restaurantRepository) {
+    public RestaurantController(DataJpaRestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 
@@ -33,4 +33,8 @@ public class RestaurantController {
     public ResponseEntity<RestaurantTo> get(@PathVariable int id) {
         return ResponseEntity.of(restaurantRepository.getTo(id));
     }
+
+
+
+
 }

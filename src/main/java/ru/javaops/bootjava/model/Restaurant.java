@@ -11,7 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Set;
 
-@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity
 @Table(name = "restaurant")
 @Getter
@@ -23,6 +23,14 @@ public class Restaurant extends AbstractNamedEntity {
     private Set<Menu> menus;
 
     public Restaurant() {
+    }
+
+    public Restaurant(Restaurant restaurant) {
+        this(restaurant.id, restaurant.getName());
+    }
+
+    public Restaurant(Integer id, String name) {
+        super(id, name);
     }
 
     public void setMenus(Set<Menu> menus) {

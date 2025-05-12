@@ -3,7 +3,7 @@ package ru.javaops.bootjava.to;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 
-import java.util.Set;
+import java.util.List;
 
-public record MenuTo(@NotEmpty @Valid Set<MealTo> meals) {
+public record MenuTo(@NotEmpty @Valid List<MealTo> meals) {
 }

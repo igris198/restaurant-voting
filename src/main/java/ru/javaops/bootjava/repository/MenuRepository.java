@@ -8,14 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javaops.bootjava.model.Menu;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Transactional(readOnly = true)
 public interface MenuRepository extends JpaRepository<Menu, Integer> {
-    @Query("SELECT m FROM Menu m JOIN FETCH m.restaurant JOIN FETCH m.meals " +
-           "WHERE m.restaurant.id=:restaurantId AND m.menuDate=:menuDate " +
-           "ORDER BY m.menuDate DESC, m.restaurant.id ASC")
-    List<Menu> getMenu(@Param("restaurantId") Integer restaurantId, @Param("menuDate") LocalDate menuDate);
+    @Query("SELECT m FROM Menu m " +
+            "WHERE m.restaurant.id=:restaurantId AND m.menuDate=:menuDate ")
+    Menu getMenu(@Param("restaurantId") Integer restaurantId, @Param("menuDate") LocalDate menuDate);
 
     @Modifying
     @Transactional
