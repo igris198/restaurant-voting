@@ -1,7 +1,5 @@
 package ru.javaops.bootjava.repository;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.to.RestaurantTo;
@@ -24,7 +22,6 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
         return crudRestaurantRepository.getWithMenusAndMeals(restaurantId, menuDate);
     }
 
-    @Cacheable("restaurantTos")
     @Override
     public List<RestaurantTo> getAllTos() {
         return crudRestaurantRepository.getAllTos();
@@ -35,13 +32,11 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
         return crudRestaurantRepository.getTo(restaurantId);
     }
 
-    @CacheEvict(value = "restaurantTos", allEntries = true)
     @Override
     public <S extends Restaurant> S save(S entity) {
         return crudRestaurantRepository.save(entity);
     }
 
-    @CacheEvict(value = "restaurantTos", allEntries = true)
     @Override
     public void deleteById(Integer integer) {
         crudRestaurantRepository.deleteById(integer);

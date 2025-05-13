@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javaops.bootjava.model.Restaurant;
-import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
+import ru.javaops.bootjava.service.RestaurantService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,10 +20,10 @@ import java.util.List;
 public class RestaurantMenuController {
     public static final String REST_URL = "/api/restaurants/menus";
 
-    private final DataJpaRestaurantRepository restaurantRepository;
+    private final RestaurantService restaurantService;
 
-    public RestaurantMenuController(DataJpaRestaurantRepository restaurantRepository) {
-        this.restaurantRepository = restaurantRepository;
+    public RestaurantMenuController(RestaurantService restaurantService) {
+        this.restaurantService = restaurantService;
     }
 
     @Operation(summary = "View restaurant menu by date")
@@ -31,6 +31,6 @@ public class RestaurantMenuController {
     public List<Restaurant> get(
             @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(value = "restaurantId", required = false) Integer restaurantId) {
-        return restaurantRepository.getWithMenusAndMeals(restaurantId, date);
+        return restaurantService.getWithMenusAndMeals(date, restaurantId);
     }
 }

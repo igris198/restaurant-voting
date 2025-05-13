@@ -29,6 +29,8 @@ public class AdminUserControllerTest extends AbstractControllerTest {
     @Test
     void createRoles() throws Exception {
         Set<Role> roles = Set.of(Role.USER, Role.ADMIN);
+        User oldUser = userRepository.findById(USER_ID).orElse(null);
+        System.out.println(oldUser);
         perform(MockMvcRequestBuilders.patch(AdminUserController.REST_URL + "/{id}/role", USER_ID)
                 .header("Authorization", adminToken)
                 .contentType(MediaType.APPLICATION_JSON)

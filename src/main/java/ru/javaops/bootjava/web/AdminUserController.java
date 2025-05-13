@@ -3,106 +3,82 @@ package ru.javaops.bootjava.web;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javaops.bootjava.model.Role;
 import ru.javaops.bootjava.model.User;
-import ru.javaops.bootjava.repository.UserRepository;
-import ru.javaops.bootjava.security.JWTUtil;
+import ru.javaops.bootjava.service.UserService;
 import ru.javaops.bootjava.to.AuthResponseTo;
-import ru.javaops.bootjava.util.ValidationUtil;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
 import static ru.javaops.bootjava.util.ValidationUtil.assureIdConsistent;
-import static ru.javaops.bootjava.util.ValidationUtil.checkNotFound;
 
 @RestController
 @RequestMapping(value = AdminUserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "AdminUserController", description = "Administrative operations with users")
 public class AdminUserController {
     public static final String REST_URL = "/api/admin/users";
-    private final Logger log = LoggerFactory.getLogger(AdminUserController.class);
-    private final UserRepository userRepository;
-    private final JWTUtil jwtUtil;
 
-    public AdminUserController(UserRepository userRepository, JWTUtil jwtUtil) {
-        this.userRepository = userRepository;
-        this.jwtUtil = jwtUtil;
+    private final UserService userService;
+
+    public AdminUserController(UserService userService) {
+        this.userService = userService;
     }
 
     @Operation(summary = "Change user roles")
     @PatchMapping(value = "/{id}/role", consumes = MediaType.APPLICATION_JSON_VALUE) // 13
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createRoles(@PathVariable int id, @RequestBody @Valid Set<Role> roles) {
-        log.info("AdminUserController createRoles. id = {}", id);
-        User user = ValidationUtil.checkNotFound(userRepository.findById(id).orElse(null), id);
-        user.setRoles(roles);
+        userService.createRoles(id, roles);
     }
 
     @Operation(summary = "Adding user with any role")
     @PostMapping(value = "/registration", consumes = MediaType.APPLICATION_JSON_VALUE) // 14
     public ResponseEntity<AuthResponseTo> createUser(@RequestBody @Valid User user) {
-        log.info("AdminUserController createUser");
-        Assert.notNull(user, "user must not be null");
-        ValidationUtil.checkIsNew(user);
-        User created = userRepository.save(user);
-        String token = jwtUtil.generateToken(created.getEmail());
+        AuthResponseTo authResponseTo = userService.createAndAuthUser(user, user.getRoles()); // при самостоятельной регистрации пользователя будет только одна роль
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(
-                new AuthResponseTo(
-                        created.id(),
-                        created.getEmail(),
-                        created.getRoles(),
-                        token));
+                .buildAndExpand(authResponseTo.id()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(authResponseTo);
     }
 
     @Operation(summary = "Get a list of all users with roles")
     @GetMapping // 15
     public List<User> getUsers() {
-        log.info("AdminUserController getUsers");
-        return userRepository.findAll();
+        return userService.getUsers();
     }
 
     @Operation(summary = "Change any user")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE) // 16
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void updateUser(@PathVariable int id, @RequestBody @Valid User user) {
-        log.info("AdminUserController updateUser id={}", id);
         assureIdConsistent(user, id);
-        checkNotFound(userRepository.save(user), id);
+        userService.updateUser(id, user, user.getRoles()); // при самостоятельном обновлении данных пользователя будет только одна роль
     }
 
     @Operation(summary = "Remove any user")
     @DeleteMapping("/{id}") // 17
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        log.info("AdminUserController delete id={}", id);
-        userRepository.delete(id);
+        userService.delete(id);
     }
 
     @Operation(summary = "Get user by id")
     @GetMapping("/{id}") // 26
     public ResponseEntity<User> get(@PathVariable int id) {
-        log.info("AdminUserController get id={}", id);
-        return ResponseEntity.of(userRepository.findById(id));
+        return ResponseEntity.of(userService.get(id));
     }
 
     @Operation(summary = "Allow/Deny user")
     @PatchMapping(value = "/{id}/enable") //25
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void setEnabled(@PathVariable int id, @RequestParam boolean isEnabled) {
-        log.info("AdminUserController setEnabled id={}", id);
-        userRepository.enable(id, isEnabled);
+        userService.enable(id, isEnabled);
     }
 }

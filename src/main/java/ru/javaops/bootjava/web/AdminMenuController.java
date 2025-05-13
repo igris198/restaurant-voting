@@ -8,22 +8,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.javaops.bootjava.model.Meal;
 import ru.javaops.bootjava.model.Menu;
-import ru.javaops.bootjava.model.Restaurant;
-import ru.javaops.bootjava.repository.MenuRepository;
-import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
-import ru.javaops.bootjava.to.MealTo;
+import ru.javaops.bootjava.service.MenuService;
 import ru.javaops.bootjava.to.MenuTo;
-import ru.javaops.bootjava.util.ValidationUtil;
 
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = AdminMenuController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -31,66 +23,42 @@ import java.util.List;
 public class AdminMenuController {
     public static final String REST_URL = "/api/admin/restaurants/{id}/menus/{date}";
 
-    private final MenuRepository menuRepository;
-    private final DataJpaRestaurantRepository restaurantRepository;
+    private final MenuService menuService;
 
-    public AdminMenuController(MenuRepository menuRepository, DataJpaRestaurantRepository restaurantRepository) {
-        this.menuRepository = menuRepository;
-        this.restaurantRepository = restaurantRepository;
+    public AdminMenuController(MenuService menuService) {
+        this.menuService = menuService;
     }
 
     @Operation(summary = "Adding the restaurant menu to date")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 10
-    @Transactional
     public ResponseEntity<Menu> createMenu(
             @Parameter(description = "Restaurant id") @PathVariable int id,
             @Parameter(description = "Menu date") @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @Parameter(description = "Menu content") @RequestBody @Valid MenuTo menuTo) {
-        List<MealTo> mealTos = menuTo.meals();
-        Assert.notNull(mealTos, "meals in menu must not be null");
+        Menu createdMenu = menuService.createMenu(id, date, menuTo);
 
-        Restaurant restaurant = ValidationUtil.checkNotFound(restaurantRepository.findById(id).orElse(null), id);
-        Menu menu = new Menu(date, restaurant, mealTosToMeals(mealTos));
-
-        Menu created = menuRepository.save(menu);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL)
-                .buildAndExpand(restaurant.id(), created.getMenuDate()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+                .buildAndExpand(id, createdMenu.getMenuDate()).toUri();
+        return ResponseEntity.created(uriOfNewResource).body(createdMenu);
     }
 
     @Operation(summary = "Changing the menu of the restaurant to date")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 11
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
     public void updateMenu(
             @Parameter(description = "Restaurant id") @PathVariable int id,
             @Parameter(description = "Menu date") @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @Parameter(description = "Menu content") @RequestBody @Valid MenuTo menuTo) {
-        List<MealTo> mealTos = menuTo.meals();
-        Assert.notNull(mealTos, "meals in menu must not be null");
-
-        Menu menu = ValidationUtil.checkNotFound(
-                menuRepository.getMenu(id, date),
-                "Menu with restaurantId = " + id + " and menuDate = " + date + "not found");
-
-        menu.getMeals().clear();
-        menu.getMeals().addAll(mealTosToMeals(mealTos));
-
-        ValidationUtil.checkNotFound(menuRepository.save(menu), menu.id());
+        menuService.updateMenu(id, date, menuTo);
     }
 
     @Operation(summary = "Delete restaurant menu by date")
     @DeleteMapping // 12
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Transactional
     public void deleteMenu(
             @Parameter(description = "Restaurant id") @PathVariable int id,
             @Parameter(description = "Menu date") @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        menuRepository.deleteByRestaurantAndDate(id, date);
-    }
-
-    private List<Meal> mealTosToMeals(List<MealTo> mealTos) {
-        return mealTos.stream().map(mealTo -> new Meal(null, mealTo.name(), mealTo.price())).toList();
+        menuService.deleteMenu(id, date);
     }
 }
