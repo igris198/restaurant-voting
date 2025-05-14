@@ -31,4 +31,6 @@ Each restaurant provides a new menu each day.
 
 [Open API](http://localhost:8081/v3/api-docs)
 
-Use JWT authorization http://localhost:8081/api/auth/login
+Use JWT authorization:
+
+curl -X POST "http://localhost:8081/api/auth/login" -H "Content-Type: application/json" --data "{\"email\": \"admin@gmail.com\", \"password\": \"admin\"}" 
