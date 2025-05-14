@@ -44,9 +44,14 @@ public class MenuService {
                 menuRepository.getMenu(restaurantId, date),
                 "Menu with restaurantId = " + restaurantId + " and menuDate = " + date + "not found");
 
+        List<Meal> meals = mealTosToMeals(mealTos);
         menu.getMeals().clear();
-        menu.getMeals().addAll(mealTosToMeals(mealTos));
-        ValidationUtil.checkNotFound(menuRepository.save(menu), menu.id());
+        meals.forEach(meal -> {
+            meal.setMenu(menu);
+            menu.getMeals().add(meal);
+        });
+        Menu resultMenu = menuRepository.save(menu);
+        ValidationUtil.checkNotFound(resultMenu, menu.id());
     }
 
     public void deleteMenu(int restaurantId, LocalDate date) {

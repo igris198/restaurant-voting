@@ -49,16 +49,18 @@ public class VotingService {
 
         LocalTime now = LocalTime.now();
         if (now.isAfter(LocalTime.of(11, 0))) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "vote cannot be changed");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "vote cannot be changed after 11 a.m.");
         }
         voting.setRestaurant(restaurant);
         votingRepository.save(voting);
     }
 
+    @Transactional(readOnly = true)
     public List<VotingTo> getVoting() {
         return VotingUtil.getTos(votingRepository.findByVotingDate(LocalDate.now()));
     }
 
+    @Transactional(readOnly = true)
     public List<VotingTo> getAll() {
         return VotingUtil.getTos(votingRepository.findAll());
     }

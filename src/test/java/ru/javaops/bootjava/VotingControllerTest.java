@@ -19,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 public class VotingControllerTest extends AbstractControllerTest {
     private static final MatcherFactory.Matcher<VotingTo> MATCHER = MatcherFactory.usingEqualsComparator(VotingTo.class);
 

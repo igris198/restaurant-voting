@@ -12,7 +12,8 @@ import java.util.List;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.javaops.bootjava.TestData.*;
+import static ru.javaops.bootjava.TestData.RESTO_ID;
+import static ru.javaops.bootjava.TestData.restaurantsWithMenus;
 
 public class RestaurantMenuControllerTest extends AbstractControllerTest {
     private static final MatcherFactory.Matcher<Restaurant> RESTO_MATCHER = MatcherFactory.usingEqualsComparator(Restaurant.class);

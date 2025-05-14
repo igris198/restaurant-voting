@@ -91,9 +91,9 @@ public class AdminMenuControllerTest extends AbstractControllerTest {
     @Test
     void deleteMenuUnAuth() throws Exception {
         perform(MockMvcRequestBuilders.delete(
-                        AdminMenuController.REST_URL,
-                        TestData.restaurant.id(),
-                        LocalDate.now().format(DateTimeFormatter.ISO_DATE)))
+                AdminMenuController.REST_URL,
+                TestData.restaurant.id(),
+                LocalDate.now().format(DateTimeFormatter.ISO_DATE)))
                 .andDo(print())
                 .andExpect(status().isForbidden());
     }
