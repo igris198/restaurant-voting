@@ -1,5 +1,6 @@
 package ru.javaops.bootjava.util.exception;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +44,12 @@ public class RestaurantVotingExceptionHandler {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR, details);
     }
 
-    @ExceptionHandler({IllegalArgumentException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, ResponseStatusException.class})
+    @ExceptionHandler({
+            IllegalArgumentException.class,
+            MethodArgumentTypeMismatchException.class,
+            HttpMessageNotReadableException.class,
+            ResponseStatusException.class,
+            EntityNotFoundException.class})
     public ResponseEntity<ErrorInfo> validationError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
     }

@@ -2,15 +2,16 @@ package ru.javaops.bootjava.web;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.service.RestaurantService;
 import ru.javaops.bootjava.to.RestaurantTo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -36,4 +37,20 @@ public class RestaurantController {
     public ResponseEntity<RestaurantTo> get(@PathVariable int id) {
         return ResponseEntity.of(restaurantService.getTo(id));
     }
+
+    @Operation(summary = "View restaurant menu by date")
+    @GetMapping("/with-menus") // 2
+    public List<Restaurant> get(
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(value = "restaurantId", required = false) Integer restaurantId) {
+        return restaurantService.getWithMenusAndMeals(date, restaurantId);
+    }
+
+    @Operation(summary = "View the menus of all restaurants for today.")
+    @GetMapping("/with-menus/today") // 1
+    @Cacheable("restaurantMenuToday")
+    public List<Restaurant> getToday() {
+        return restaurantService.getWithMenusAndMeals(null, null);
+    }
+
 }

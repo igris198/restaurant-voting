@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.javaops.bootjava.model.Restaurant;
 import ru.javaops.bootjava.model.Voting;
-import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
+import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.repository.UserRepository;
 import ru.javaops.bootjava.repository.VotingRepository;
 import ru.javaops.bootjava.security.SecurityUtil;
@@ -16,16 +16,19 @@ import ru.javaops.bootjava.util.VotingUtil;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VotingService {
+    private static final LocalTime VOTING_TIME = LocalTime.of(11, 0);
 
     private final VotingRepository votingRepository;
-    private final DataJpaRestaurantRepository restaurantRepository;
+    private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 
-    public VotingService(VotingRepository votingRepository, DataJpaRestaurantRepository restaurantRepository, UserRepository userRepository) {
+    public VotingService(VotingRepository votingRepository, RestaurantRepository restaurantRepository, UserRepository userRepository) {
         this.votingRepository = votingRepository;
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
@@ -41,27 +44,24 @@ public class VotingService {
     }
 
     @Transactional
-    public void update(Integer restaurantId) {
+    public void update(int id, int restaurantId) {
         Restaurant restaurant = ValidationUtil.checkNotFound(restaurantRepository.getReferenceById(restaurantId), restaurantId);
-
-        int userId = SecurityUtil.authUserId();
-        Voting voting = ValidationUtil.checkNotFound(votingRepository.findByUserIdAndCurrentDate(userId).orElse(null), userId);
+        Voting voting = ValidationUtil.checkNotFound(votingRepository.findByVotingDateAndUser_Id(LocalDate.now(), SecurityUtil.authUserId()).orElse(null), id);
 
         LocalTime now = LocalTime.now();
-        if (now.isAfter(LocalTime.of(11, 0))) {
+        if (now.isAfter(VOTING_TIME)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "vote cannot be changed after 11 a.m.");
         }
         voting.setRestaurant(restaurant);
         votingRepository.save(voting);
     }
 
-    @Transactional(readOnly = true)
     public List<VotingTo> getVoting() {
-        return VotingUtil.getTos(votingRepository.findByVotingDate(LocalDate.now()));
+        Optional<Voting> voting = votingRepository.findByVotingDateAndUser_Id(LocalDate.now(), SecurityUtil.authUserId());
+        return voting.isPresent() ? VotingUtil.getTos(List.of(voting.get())) : VotingUtil.getTos(Collections.emptyList()) ;
     }
 
-    @Transactional(readOnly = true)
     public List<VotingTo> getAll() {
-        return VotingUtil.getTos(votingRepository.findAll());
+        return VotingUtil.getTos(votingRepository.findAllByUser_Id(SecurityUtil.authUserId()));
     }
 }

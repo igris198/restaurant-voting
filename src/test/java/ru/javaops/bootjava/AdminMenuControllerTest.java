@@ -52,7 +52,7 @@ public class AdminMenuControllerTest extends AbstractControllerTest {
         newMenu.setId(resultMenu.id());
         newMenu.getMeals().forEach(meal -> meal.setMenu(null));
         MENU_MATCHER.assertMatch(resultMenu, newMenu);
-        Menu savedMenu = menuRepository.getMenu(TestData.restaurant.id(), LocalDate.now().plusDays(1));
+        Menu savedMenu = menuRepository.getMenu(TestData.restaurant.id(), LocalDate.now().plusDays(1)).get();
         savedMenu.getMeals().forEach(meal -> meal.setMenu(null));
         MENU_MATCHER.assertMatch(savedMenu, newMenu);
     }
@@ -69,7 +69,7 @@ public class AdminMenuControllerTest extends AbstractControllerTest {
                 .content(JsonUtil.writeValue(newMenuTo)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
-        Menu resultMenu = menuRepository.getMenu(START_SEQ + 3, LocalDate.now());
+        Menu resultMenu = menuRepository.getMenu(START_SEQ + 3, LocalDate.now()).get();
         resultMenu.getMeals().forEach(meal -> meal.setMenu(null));
         Menu updatedMenu = TestData.getUpdatedMenu();
         updatedMenu.getMeals().forEach(meal -> meal.setMenu(null));

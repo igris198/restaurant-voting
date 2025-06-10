@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaops.bootjava.model.Restaurant;
-import ru.javaops.bootjava.web.RestaurantMenuController;
 
 import java.time.LocalDate;
 import java.util.List;

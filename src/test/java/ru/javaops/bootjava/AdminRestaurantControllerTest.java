@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.javaops.bootjava.model.Restaurant;
-import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
+import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.util.json.JsonUtil;
 import ru.javaops.bootjava.web.AdminRestaurantController;
 
@@ -19,7 +19,7 @@ public class AdminRestaurantControllerTest extends AbstractControllerTest {
     private static final MatcherFactory.Matcher<Restaurant> RESTO_MATCHER = MatcherFactory.usingEqualsComparator(Restaurant.class);
 
     @Autowired
-    private DataJpaRestaurantRepository restaurantRepository;
+    private RestaurantRepository restaurantRepository;
 
     @Test
     void create() throws Exception {

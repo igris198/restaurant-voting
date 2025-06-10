@@ -45,7 +45,6 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    @CacheEvict(value = "users", allEntries = true)
     public void createRoles(int userId, Set<Role> roles) {
         User user = checkNotFound(userRepository.findById(userId).orElse(null), userId);
         user.setRoles(roles);
@@ -53,7 +52,6 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    @CacheEvict(value = "users", allEntries = true)
     public AuthResponseTo createAndAuthUser(User user, Set<Role> roles) {
         Assert.notNull(user, "user must not be null");
         ValidationUtil.checkIsNew(user);
@@ -68,19 +66,16 @@ public class UserService implements UserDetailsService {
                 token);
     }
 
-    @Cacheable("users")
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
     @Transactional
-    @CacheEvict(value = "users", allEntries = true)
     public void updateUser(int userId, User user, Set<Role> roles) {
         user.setRoles(roles);
         checkNotFound(userRepository.save(user), userId);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     public void delete(int userId) {
         ValidationUtil.checkNotFound(userRepository.delete(userId), userId);
     }
@@ -89,7 +84,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(userId);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     public void enable(int userId, boolean isEnabled) {
         userRepository.enable(userId, isEnabled);
     }

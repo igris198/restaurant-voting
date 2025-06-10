@@ -14,6 +14,7 @@ import ru.javaops.bootjava.util.ValidationUtil;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MenuService {
@@ -24,6 +25,10 @@ public class MenuService {
     public MenuService(MenuRepository menuRepository, RestaurantRepository restaurantRepository) {
         this.menuRepository = menuRepository;
         this.restaurantRepository = restaurantRepository;
+    }
+
+    public Optional<Menu> getMenu(int restaurantId, LocalDate date) {
+        return menuRepository.getMenu(restaurantId, date);
     }
 
     @Transactional
@@ -41,7 +46,7 @@ public class MenuService {
         Assert.notNull(mealTos, "meals in menu must not be null");
 
         Menu menu = ValidationUtil.checkNotFound(
-                menuRepository.getMenu(restaurantId, date),
+                menuRepository.getMenu(restaurantId, date).orElse(null),
                 "Menu with restaurantId = " + restaurantId + " and menuDate = " + date + "not found");
 
         List<Meal> meals = mealTosToMeals(mealTos);

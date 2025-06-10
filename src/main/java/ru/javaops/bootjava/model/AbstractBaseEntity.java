@@ -1,6 +1,7 @@
 package ru.javaops.bootjava.model;
 
 import jakarta.persistence.*;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.domain.Persistable;
 import org.springframework.util.Assert;
 
@@ -45,12 +46,16 @@ public abstract class AbstractBaseEntity implements Persistable<Integer> {
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        return id != null && id.equals(((AbstractBaseEntity) o).id);
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        AbstractBaseEntity that = (AbstractBaseEntity) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(id);
+        return this instanceof HibernateProxy proxy ? proxy.getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 }

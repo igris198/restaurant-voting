@@ -4,7 +4,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import ru.javaops.bootjava.model.Restaurant;
-import ru.javaops.bootjava.repository.DataJpaRestaurantRepository;
+import ru.javaops.bootjava.repository.RestaurantRepository;
 import ru.javaops.bootjava.to.RestaurantTo;
 
 import java.time.LocalDate;
@@ -16,9 +16,9 @@ import static ru.javaops.bootjava.util.ValidationUtil.checkNotFound;
 @Service
 public class RestaurantService {
 
-    private final DataJpaRestaurantRepository restaurantRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    public RestaurantService(DataJpaRestaurantRepository restaurantRepository) {
+    public RestaurantService(RestaurantRepository restaurantRepository) {
         this.restaurantRepository = restaurantRepository;
     }
 

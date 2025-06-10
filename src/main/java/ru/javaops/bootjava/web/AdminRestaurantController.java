@@ -3,6 +3,7 @@ package ru.javaops.bootjava.web;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,7 @@ public class AdminRestaurantController {
 
     @Operation(summary = "Addition of restaurant")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE) // 7
+    @CacheEvict(value = "restaurantMenuToday", allEntries = true)
     public ResponseEntity<Restaurant> create(@RequestBody @Valid Restaurant restaurant) {
         Restaurant created = restaurantService.create(restaurant);
 
@@ -41,6 +43,7 @@ public class AdminRestaurantController {
     @Operation(summary = "Restaurant removal")
     @DeleteMapping("/{id}") // 8
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "restaurantMenuToday", allEntries = true)
     public void delete(@PathVariable int id) {
         restaurantService.delete(id);
     }
@@ -48,6 +51,7 @@ public class AdminRestaurantController {
     @Operation(summary = "Restaurant change")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE) // 9
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @CacheEvict(value = "restaurantMenuToday", allEntries = true)
     public void update(@PathVariable int id, @RequestBody @Valid Restaurant restaurant) {
         assureIdConsistent(restaurant, id);
         restaurantService.update(id, restaurant);

@@ -19,7 +19,7 @@ import java.util.Collections;
 @RequestMapping(value = UserController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 @Tag(name = "UserController", description = "Operations with its own user")
 public class UserController {
-    public static final String REST_URL = "/api/users";
+    public static final String REST_URL = "/api/user";
 
     private final UserService userService;
 
